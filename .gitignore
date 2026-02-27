@@ -12,3 +12,6 @@ dist
 # misc
 .DS_Store
 *.local
+
+# Supabase local state (contains project ref, not needed in repo)
+supabase/.temp/
