@@ -1,9 +1,36 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRecipe, saveRecipe, recipeToFormData } from '@/hooks/useRecipes'
+import { useShoppingList } from '@/hooks/useShoppingList'
+import { useInventory } from '@/hooks/useInventory'
 import { supabase } from '@/lib/supabase'
 import { RecipeForm, type RecipeFormData } from '@/components/recipes/RecipeForm'
+import { IngredientRow } from '@/components/recipes/IngredientRow'
+
+const STOP_WORDS = new Set([
+  'cup', 'cups', 'tsp', 'tbsp', 'tablespoon', 'tablespoons', 'teaspoon', 'teaspoons',
+  'pound', 'pounds', 'ounce', 'ounces', 'gram', 'grams', 'kilogram', 'liter', 'liters',
+  'can', 'jar', 'bag', 'bunch', 'pinch', 'handful', 'clove', 'cloves', 'slice', 'slices',
+  'large', 'small', 'medium', 'fresh', 'dried', 'frozen', 'whole', 'half',
+  'minced', 'diced', 'chopped', 'sliced', 'grated', 'ground', 'crushed', 'peeled',
+  'and', 'the', 'for', 'with',
+])
+
+function ingredientWords(s: string): string[] {
+  return s
+    .toLowerCase()
+    .replace(/[^a-z\s]/g, '')
+    .split(/\s+/)
+    .filter(w => w.length > 2 && !STOP_WORDS.has(w))
+}
+
+function fuzzyMatch(ingredientName: string, itemName: string): boolean {
+  const a = ingredientWords(ingredientName)
+  const b = ingredientWords(itemName)
+  if (!a.length || !b.length) return false
+  return a.some(aw => b.some(bw => bw.includes(aw) || aw.includes(bw)))
+}
 
 function formatTime(minutes: number): string {
   if (minutes < 60) return `${minutes} min`
@@ -17,6 +44,10 @@ export function RecipeDetailPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { recipe, loading, error, refetch } = useRecipe(id!)
+  const { unchecked, checked, addItem: addToShoppingList } = useShoppingList()
+  const { items: inventoryItems } = useInventory()
+
+  const allShoppingItems = useMemo(() => [...unchecked, ...checked], [unchecked, checked])
 
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -169,12 +200,15 @@ export function RecipeDetailPage() {
           {recipe.recipe_ingredients.length > 0 && (
             <section>
               <h2 className="text-xl font-semibold text-gray-900 mb-4">Ingredients</h2>
-              <ul className="space-y-2">
+              <ul className="space-y-1.5">
                 {recipe.recipe_ingredients.map(ing => (
-                  <li key={ing.id} className="flex items-start gap-2 text-sm text-gray-700">
-                    <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-gray-400 shrink-0" />
-                    {ing.name}
-                  </li>
+                  <IngredientRow
+                    key={ing.id}
+                    name={ing.name}
+                    shoppingMatches={allShoppingItems.filter(item => fuzzyMatch(ing.name, item.name))}
+                    inventoryMatches={inventoryItems.filter(item => fuzzyMatch(ing.name, item.name))}
+                    onAddToList={() => addToShoppingList(ing.name)}
+                  />
                 ))}
               </ul>
             </section>

@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { useShoppingList } from '@/hooks/useShoppingList'
 import { useStapleItems } from '@/hooks/useStapleItems'
+import { upsertInventoryItem } from '@/hooks/useInventory'
 import { AddItemInput } from '@/components/shopping/AddItemInput'
 import { ManageStaplesSheet } from '@/components/shopping/ManageStaplesSheet'
 import { getWeekStart, toISODate } from '@/lib/dates'
+import { useAuth } from '@/contexts/AuthContext'
 
 export function ShoppingListPage() {
+  const { user } = useAuth()
   const {
     unchecked,
     checked,
@@ -18,6 +21,14 @@ export function ShoppingListPage() {
     getSuggestions,
   } = useShoppingList()
   const { staples, loading: staplesLoading, addStaple, deleteStaple } = useStapleItems()
+
+  async function handleCheckItem(itemId: string, itemName: string) {
+    // Fire both in parallel — inventory upsert doesn't depend on the toggle
+    await Promise.all([
+      toggleItem(itemId),
+      upsertInventoryItem(itemName, user!.id),
+    ])
+  }
 
   const [showStaplesSheet, setShowStaplesSheet] = useState(false)
   const [restocking, setRestocking] = useState(false)
@@ -128,7 +139,7 @@ export function ShoppingListPage() {
               className="flex items-center gap-3 px-4 py-3 bg-white border border-gray-200 rounded-xl group"
             >
               <button
-                onClick={() => toggleItem(item.id)}
+                onClick={() => handleCheckItem(item.id, item.name)}
                 className="w-5 h-5 rounded-full border-2 border-gray-300 hover:border-blue-500 shrink-0 transition-colors"
                 aria-label={`Mark ${item.name} as done`}
               />

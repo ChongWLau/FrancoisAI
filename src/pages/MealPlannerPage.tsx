@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { addDays, formatWeekRange, getWeekStart, toISODate } from '@/lib/dates'
 import { useMealEntries, type MealEntryWithRecipe } from '@/hooks/useMealEntries'
@@ -12,6 +13,7 @@ function getThisWeekStart() {
 }
 
 export function MealPlannerPage() {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const [weekStart, setWeekStart] = useState<Date>(getThisWeekStart)
   const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
@@ -102,12 +104,22 @@ export function MealPlannerPage() {
         <>
           {/* Desktop grid */}
           <div className="hidden md:block">
-            <WeekGrid weekDays={weekDays} entryMap={entryMap} onSlotClick={handleSlotClick} />
+            <WeekGrid
+              weekDays={weekDays}
+              entryMap={entryMap}
+              onSlotClick={handleSlotClick}
+              onViewRecipe={id => navigate(`/recipes/${id}`)}
+            />
           </div>
 
           {/* Mobile list */}
           <div className="md:hidden">
-            <WeekList weekDays={weekDays} entryMap={entryMap} onSlotClick={handleSlotClick} />
+            <WeekList
+              weekDays={weekDays}
+              entryMap={entryMap}
+              onSlotClick={handleSlotClick}
+              onViewRecipe={id => navigate(`/recipes/${id}`)}
+            />
           </div>
         </>
       )}

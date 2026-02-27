@@ -14,9 +14,10 @@ interface Props {
   weekDays: Date[]
   entryMap: EntryMap
   onSlotClick: (date: string, mealType: MealType, entry?: MealEntryWithRecipe) => void
+  onViewRecipe: (recipeId: string) => void
 }
 
-export function WeekGrid({ weekDays, entryMap, onSlotClick }: Props) {
+export function WeekGrid({ weekDays, entryMap, onSlotClick, onViewRecipe }: Props) {
   return (
     /* Horizontally scrollable so it works on smaller desktop windows too */
     <div className="overflow-x-auto">
@@ -55,10 +56,10 @@ export function WeekGrid({ weekDays, entryMap, onSlotClick }: Props) {
               const today = isToday(day)
 
               return (
-                <button
+                <div
                   key={dateStr}
                   onClick={() => onSlotClick(dateStr, mealType, entry)}
-                  className={`rounded-lg border px-2 py-2 min-h-[52px] flex flex-col justify-center text-left transition-all ${
+                  className={`rounded-lg border px-2 py-2 min-h-[52px] flex flex-col justify-between text-left transition-all cursor-pointer ${
                     label
                       ? today
                         ? 'bg-blue-50 border-blue-300 hover:bg-blue-100'
@@ -69,13 +70,24 @@ export function WeekGrid({ weekDays, entryMap, onSlotClick }: Props) {
                   }`}
                 >
                   {label ? (
-                    <span className="text-xs text-gray-800 font-medium line-clamp-2 leading-snug">
-                      {label}
-                    </span>
+                    <>
+                      <span className="text-xs text-gray-800 font-medium line-clamp-2 leading-snug">
+                        {label}
+                      </span>
+                      {entry?.recipe_id && (
+                        <button
+                          onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
+                          className="mt-1 self-end text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+                          aria-label={`View recipe ${label}`}
+                        >
+                          View →
+                        </button>
+                      )}
+                    </>
                   ) : (
                     <span className="text-xs text-gray-400">+ Add</span>
                   )}
-                </button>
+                </div>
               )
             })}
           </div>

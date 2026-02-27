@@ -14,9 +14,10 @@ interface Props {
   weekDays: Date[]
   entryMap: EntryMap
   onSlotClick: (date: string, mealType: MealType, entry?: MealEntryWithRecipe) => void
+  onViewRecipe: (recipeId: string) => void
 }
 
-export function WeekList({ weekDays, entryMap, onSlotClick }: Props) {
+export function WeekList({ weekDays, entryMap, onSlotClick, onViewRecipe }: Props) {
   return (
     <div className="space-y-3">
       {weekDays.map(day => {
@@ -47,20 +48,29 @@ export function WeekList({ weekDays, entryMap, onSlotClick }: Props) {
                 const label = entry?.recipes?.title ?? entry?.custom_meal_text
 
                 return (
-                  <button
+                  <div
                     key={mealType}
                     onClick={() => onSlotClick(dateStr, mealType, entry)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors text-left"
+                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
                     <span className="text-xs font-semibold text-gray-400 w-20 shrink-0 uppercase tracking-wide">
                       {MEAL_LABELS[mealType]}
                     </span>
                     {label ? (
-                      <span className="text-sm text-gray-800 truncate">{label}</span>
+                      <span className="text-sm text-gray-800 truncate flex-1">{label}</span>
                     ) : (
-                      <span className="text-sm text-gray-400">+ Add</span>
+                      <span className="text-sm text-gray-400 flex-1">+ Add</span>
                     )}
-                  </button>
+                    {entry?.recipe_id && (
+                      <button
+                        onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
+                        className="text-xs text-blue-500 hover:text-blue-700 font-medium shrink-0"
+                        aria-label={`View recipe ${label}`}
+                      >
+                        View →
+                      </button>
+                    )}
+                  </div>
                 )
               })}
             </div>

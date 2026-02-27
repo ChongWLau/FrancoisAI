@@ -8,19 +8,24 @@ export interface RecipeWithDetails extends Recipe {
   recipe_steps: RecipeStep[]
 }
 
+export interface RecipeListItem extends Recipe {
+  recipe_ingredients: { name: string }[]
+}
+
 export function useRecipes() {
-  const [recipes, setRecipes] = useState<Recipe[]>([])
+  const [recipes, setRecipes] = useState<RecipeListItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('recipes')
-      .select('*')
+      .select('*, recipe_ingredients(name)')
       .order('created_at', { ascending: false })
     if (error) setError(error.message)
-    else setRecipes((data ?? []) as Recipe[])
+    else setRecipes((data ?? []) as RecipeListItem[])
     setLoading(false)
   }, [])
 
