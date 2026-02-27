@@ -148,7 +148,7 @@ export function RecipeDetailPage() {
           )}
 
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 leading-tight">{recipe.title}</h1>
+            <h1 className="text-3xl font-display font-bold text-gray-900 leading-tight">{recipe.title}</h1>
             {recipe.description && (
               <p className="mt-3 text-gray-600 leading-relaxed">{recipe.description}</p>
             )}
@@ -188,7 +188,7 @@ export function RecipeDetailPage() {
               {recipe.tags.map(tag => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-blue-50 text-blue-700 text-sm rounded-full border border-blue-100"
+                  className="px-3 py-1 bg-amber-50 text-amber-700 text-sm rounded-full border border-amber-100"
                 >
                   {tag}
                 </span>
@@ -221,7 +221,7 @@ export function RecipeDetailPage() {
               <ol className="space-y-4">
                 {recipe.recipe_steps.map((step, i) => (
                   <li key={step.id} className="flex gap-4">
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-blue-600 text-white text-sm font-semibold flex items-center justify-center">
+                    <span className="shrink-0 w-7 h-7 rounded-full bg-navy-800 text-white text-sm font-semibold flex items-center justify-center">
                       {i + 1}
                     </span>
                     <p className="text-sm text-gray-700 leading-relaxed pt-1">{step.instruction}</p>
@@ -238,7 +238,7 @@ export function RecipeDetailPage() {
                 href={recipe.source_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+                className="text-sm text-amber-600 hover:text-amber-700 hover:underline"
               >
                 View original recipe ↗
               </a>

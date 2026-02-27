@@ -69,7 +69,7 @@ export function ShoppingListPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -79,7 +79,7 @@ export function ShoppingListPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h1 className="text-xl font-semibold text-gray-900">Shopping List</h1>
+          <h1 className="text-xl font-display font-semibold text-gray-900">Shopping List</h1>
           {totalItems > 0 && (
             <p className="text-xs text-gray-400 mt-0.5">
               {unchecked.length} remaining · {checked.length} in cart
@@ -122,7 +122,7 @@ export function ShoppingListPage() {
           {staples.length > 0 && (
             <button
               onClick={handleRestock}
-              className="mt-3 text-sm text-blue-600 font-medium hover:underline"
+              className="mt-3 text-sm text-amber-600 font-medium hover:underline"
             >
               Add staple items
             </button>
@@ -140,7 +140,7 @@ export function ShoppingListPage() {
             >
               <button
                 onClick={() => handleCheckItem(item.id, item.name)}
-                className="w-5 h-5 rounded-full border-2 border-gray-300 hover:border-blue-500 shrink-0 transition-colors"
+                className="w-5 h-5 rounded-full border-2 border-gray-300 hover:border-amber-500 shrink-0 transition-colors"
                 aria-label={`Mark ${item.name} as done`}
               />
               <span className="flex-1 text-sm text-gray-800">{item.name}</span>

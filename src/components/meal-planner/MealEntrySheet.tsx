@@ -154,7 +154,7 @@ export function MealEntrySheet({ slot, onClose, onSave, onDelete }: Props) {
         <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
           {/* Selected recipe chip */}
           {selectedRecipe && (
-            <div className="flex items-center gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+            <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
               {selectedRecipe.image_url && (
                 <img
                   src={selectedRecipe.image_url}
@@ -162,12 +162,12 @@ export function MealEntrySheet({ slot, onClose, onSave, onDelete }: Props) {
                   className="w-10 h-10 rounded-lg object-cover shrink-0"
                 />
               )}
-              <span className="flex-1 text-sm font-medium text-blue-900 truncate">
+              <span className="flex-1 text-sm font-medium text-amber-900 truncate">
                 {selectedRecipe.title}
               </span>
               <button
                 onClick={() => setSelectedRecipe(null)}
-                className="text-blue-400 hover:text-blue-700 transition-colors text-sm font-medium shrink-0"
+                className="text-amber-500 hover:text-amber-700 transition-colors text-sm font-medium shrink-0"
               >
                 Change
               </button>
@@ -187,7 +187,7 @@ export function MealEntrySheet({ slot, onClose, onSave, onDelete }: Props) {
                   value={searchQuery}
                   onChange={e => setSearchQuery(e.target.value)}
                   placeholder="Type to search…"
-                  className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
               </div>
 
@@ -238,7 +238,7 @@ export function MealEntrySheet({ slot, onClose, onSave, onDelete }: Props) {
                 onChange={e => setCustomText(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && canSave && handleSave()}
                 placeholder="e.g. Leftovers, Takeaway, Fasting…"
-                className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
               />
             </>
           )}
@@ -258,7 +258,7 @@ export function MealEntrySheet({ slot, onClose, onSave, onDelete }: Props) {
           <button
             onClick={handleSave}
             disabled={!canSave || saving}
-            className="ml-auto px-6 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="ml-auto px-6 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
             {saving ? 'Saving…' : 'Save'}
           </button>

@@ -32,7 +32,7 @@ export function WeekList({ weekDays, entryMap, onSlotClick, onViewRecipe }: Prop
             {/* Day header */}
             <div
               className={`px-4 py-2.5 border-b ${
-                today ? 'bg-blue-600 border-blue-600' : 'bg-gray-50 border-gray-100'
+                today ? 'bg-navy-800 border-navy-800' : 'bg-gray-50 border-gray-100'
               }`}
             >
               <span className={`text-sm font-semibold ${today ? 'text-white' : 'text-gray-700'}`}>
@@ -64,7 +64,7 @@ export function WeekList({ weekDays, entryMap, onSlotClick, onViewRecipe }: Prop
                     {entry?.recipe_id && (
                       <button
                         onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
-                        className="text-xs text-blue-500 hover:text-blue-700 font-medium shrink-0"
+                        className="text-xs text-amber-600 hover:text-amber-800 font-medium shrink-0"
                         aria-label={`View recipe ${label}`}
                       >
                         View →

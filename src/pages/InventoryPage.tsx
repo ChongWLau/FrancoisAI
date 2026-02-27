@@ -20,7 +20,7 @@ export function InventoryPage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -29,7 +29,7 @@ export function InventoryPage() {
     <div className="max-w-lg mx-auto px-4 py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-gray-900">Inventory</h1>
+        <h1 className="text-xl font-display font-semibold text-gray-900">Inventory</h1>
         {totalItems > 0 && (
           <p className="text-xs text-gray-400 mt-0.5">{totalItems} items tracked</p>
         )}

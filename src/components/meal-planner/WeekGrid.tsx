@@ -31,7 +31,7 @@ export function WeekGrid({ weekDays, entryMap, onSlotClick, onViewRecipe }: Prop
               <div
                 key={toISODate(day)}
                 className={`text-center py-1 rounded-lg text-xs font-semibold ${
-                  today ? 'bg-blue-600 text-white' : 'text-gray-500'
+                  today ? 'bg-navy-800 text-white' : 'text-gray-500'
                 }`}
               >
                 {formatDayShort(day)}
@@ -62,10 +62,10 @@ export function WeekGrid({ weekDays, entryMap, onSlotClick, onViewRecipe }: Prop
                   className={`rounded-lg border px-2 py-2 min-h-[52px] flex flex-col justify-between text-left transition-all cursor-pointer ${
                     label
                       ? today
-                        ? 'bg-blue-50 border-blue-300 hover:bg-blue-100'
+                        ? 'bg-amber-50 border-amber-300 hover:bg-amber-100'
                         : 'bg-white border-gray-300 hover:border-gray-400 hover:shadow-sm'
                       : today
-                        ? 'border-blue-200 border-dashed hover:bg-blue-50'
+                        ? 'border-amber-200 border-dashed hover:bg-amber-50'
                         : 'border-gray-200 border-dashed hover:bg-gray-50'
                   }`}
                 >
@@ -77,7 +77,7 @@ export function WeekGrid({ weekDays, entryMap, onSlotClick, onViewRecipe }: Prop
                       {entry?.recipe_id && (
                         <button
                           onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
-                          className="mt-1 self-end text-[10px] text-blue-500 hover:text-blue-700 font-medium"
+                          className="mt-1 self-end text-[10px] text-amber-600 hover:text-amber-800 font-medium"
                           aria-label={`View recipe ${label}`}
                         >
                           View →

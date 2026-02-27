@@ -1,15 +1,15 @@
 # FrancoisAI
 
-A personal cooking app for two people sharing a household — recipe management with URL import, weekly meal planning, and a shared shopping list with automatic staple restocking.
+A personal cooking app for two people sharing a household — recipe management with URL import, weekly meal planning, a shared shopping list with automatic staple restocking, and a fridge/freezer/pantry inventory tracker.
 
 > **Designed for exactly 2 users.** All data (recipes, meal plan, shopping list) is shared between both users in real time. The database enforces a hard cap of 2 accounts.
 
 ## Features
 
-- **Recipes** — import from any recipe URL or create manually; edit and delete
-- **Meal Planner** — shared weekly grid with past/future week navigation
+- **Recipes** — import from any recipe URL or create manually; search by name or ingredient; add individual ingredients directly to the shopping list
+- **Meal Planner** — shared weekly grid with past/future week navigation; tap any recipe entry to go straight to the recipe
 - **Shopping List** — shared list with autocomplete from history, staple items auto-added each Monday
-- **Inventory** — track fridge/freezer/pantry stock *(coming soon)*
+- **Inventory** — track stock grouped by fridge/freezer/pantry/other; items added automatically when checked off the shopping list; quantity stepper, location picker, and restock shortcut
 - **AI Chat** — cooking assistant via Gemini API *(coming soon)*
 
 ## Stack

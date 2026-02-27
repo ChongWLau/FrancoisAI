@@ -89,7 +89,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           required
           value={form.title}
           onChange={e => set('title', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           placeholder="Recipe name"
         />
       </div>
@@ -101,7 +101,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           value={form.description}
           onChange={e => set('description', e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
           placeholder="A short description of the recipe"
         />
       </div>
@@ -115,7 +115,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
             min="1"
             value={form.servings}
             onChange={e => set('servings', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             placeholder="4"
           />
         </div>
@@ -126,7 +126,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
             min="0"
             value={form.prep_time_minutes}
             onChange={e => set('prep_time_minutes', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             placeholder="15"
           />
         </div>
@@ -137,7 +137,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
             min="0"
             value={form.cook_time_minutes}
             onChange={e => set('cook_time_minutes', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             placeholder="30"
           />
         </div>
@@ -150,7 +150,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           type="text"
           value={form.tags}
           onChange={e => set('tags', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           placeholder="Italian, Pasta, Quick (comma-separated)"
         />
       </div>
@@ -162,7 +162,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           type="url"
           value={form.image_url}
           onChange={e => set('image_url', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           placeholder="https://..."
         />
       </div>
@@ -174,7 +174,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           type="url"
           value={form.source_url}
           onChange={e => set('source_url', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           placeholder="https://..."
         />
       </div>
@@ -188,7 +188,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
             onChange={e => set('is_shared', e.target.checked)}
             className="sr-only peer"
           />
-          <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-blue-600 peer-focus:ring-2 peer-focus:ring-blue-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
+          <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-amber-600 peer-focus:ring-2 peer-focus:ring-amber-500 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4" />
         </div>
         <span className="text-sm text-gray-700">Share with the other user</span>
       </label>
@@ -203,7 +203,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
                 type="text"
                 value={ing}
                 onChange={e => updateIngredient(i, e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
                 placeholder="e.g. 2 cups all-purpose flour"
               />
               <button
@@ -221,7 +221,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
         <button
           type="button"
           onClick={() => set('ingredients', [...form.ingredients, ''])}
-          className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium"
         >
           + Add ingredient
         </button>
@@ -240,7 +240,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
                 value={step}
                 onChange={e => updateStep(i, e.target.value)}
                 rows={2}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 resize-none"
                 placeholder="Describe this step…"
               />
               <button
@@ -258,7 +258,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
         <button
           type="button"
           onClick={() => set('steps', [...form.steps, ''])}
-          className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"
+          className="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium"
         >
           + Add step
         </button>
@@ -278,7 +278,7 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
         <button
           type="submit"
           disabled={saving || !form.title.trim()}
-          className="px-6 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="px-6 py-2.5 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {saving ? 'Saving…' : 'Save Recipe'}
         </button>

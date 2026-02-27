@@ -69,13 +69,13 @@ export function AddItemInput({ onAdd, getSuggestions, stapleNames }: Props) {
           onKeyDown={handleKeyDown}
           onFocus={() => { if (suggestions.length > 0) setShowDropdown(true) }}
           placeholder="Add item…"
-          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-4 py-3 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           autoComplete="off"
         />
         <button
           onClick={() => handleAdd(value)}
           disabled={!value.trim()}
-          className="px-5 py-3 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-40 transition-colors"
+          className="px-5 py-3 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 disabled:opacity-40 transition-colors"
         >
           Add
         </button>

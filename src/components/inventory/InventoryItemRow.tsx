@@ -38,7 +38,7 @@ export function InventoryItemRow({
       <select
         value={item.location ?? ''}
         onChange={e => onSetLocation((e.target.value as StorageLocation) || null)}
-        className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 shrink-0 focus:outline-none focus:ring-1 focus:ring-blue-300"
+        className="text-xs text-gray-500 bg-gray-50 border border-gray-200 rounded-lg px-2 py-1 shrink-0 focus:outline-none focus:ring-1 focus:ring-amber-300"
       >
         {LOCATION_OPTIONS.map(opt => (
           <option key={opt.value} value={opt.value}>
@@ -56,7 +56,7 @@ export function InventoryItemRow({
         /* Restock button */
         <button
           onClick={onRestock}
-          className="text-xs font-semibold text-blue-600 border border-blue-300 rounded-lg px-3 py-1.5 hover:bg-blue-50 transition-colors shrink-0"
+          className="text-xs font-semibold text-amber-600 border border-amber-300 rounded-lg px-3 py-1.5 hover:bg-amber-50 transition-colors shrink-0"
         >
           + Restock
         </button>

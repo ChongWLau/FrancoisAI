@@ -88,7 +88,7 @@ export function MealPlannerPage() {
         {!isCurrentWeek && (
           <button
             onClick={goToToday}
-            className="px-3 py-1.5 text-xs font-semibold text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
+            className="px-3 py-1.5 text-xs font-semibold text-amber-600 border border-amber-300 rounded-lg hover:bg-amber-50 transition-colors"
           >
             Today
           </button>
@@ -98,7 +98,7 @@ export function MealPlannerPage() {
       {/* Loading state */}
       {loading ? (
         <div className="flex justify-center py-16">
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <>

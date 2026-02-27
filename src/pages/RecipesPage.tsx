@@ -21,10 +21,10 @@ export function RecipesPage() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Recipes</h1>
+        <h1 className="text-2xl font-display font-semibold text-gray-900">Recipes</h1>
         <Link
           to="/recipes/new"
-          className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 transition-colors"
         >
           Add Recipe
         </Link>
@@ -44,7 +44,7 @@ export function RecipesPage() {
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search by name or ingredient…"
-            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             autoComplete="off"
           />
           {isSearching && (
@@ -73,7 +73,7 @@ export function RecipesPage() {
           <p className="text-gray-500 text-sm mb-4">No recipes yet.</p>
           <Link
             to="/recipes/new"
-            className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+            className="text-amber-600 hover:text-amber-700 text-sm font-medium"
           >
             Import your first recipe →
           </Link>
@@ -85,7 +85,7 @@ export function RecipesPage() {
           <p className="text-sm">No recipes match <span className="font-medium text-gray-600">"{query}"</span>.</p>
           <button
             onClick={() => setQuery('')}
-            className="mt-2 text-sm text-blue-600 hover:underline"
+            className="mt-2 text-sm text-amber-600 hover:underline"
           >
             Clear search
           </button>

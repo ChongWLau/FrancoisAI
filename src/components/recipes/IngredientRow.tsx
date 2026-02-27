@@ -44,7 +44,7 @@ export function IngredientRow({ name, shoppingMatches, inventoryMatches, onAddTo
               <span className="w-2 h-2 rounded-full bg-gray-300 cursor-default" />
             )}
             {hasInventory && (
-              <span className="w-2 h-2 rounded-full bg-blue-400 cursor-default" />
+              <span className="w-2 h-2 rounded-full bg-navy-400 cursor-default" />
             )}
 
             {/* Tooltip */}
@@ -88,7 +88,7 @@ export function IngredientRow({ name, shoppingMatches, inventoryMatches, onAddTo
         <button
           onClick={handleAdd}
           disabled={adding}
-          className="text-xs text-blue-500 hover:text-blue-700 font-medium disabled:opacity-50"
+          className="text-xs text-amber-600 hover:text-amber-800 font-medium disabled:opacity-50"
         >
           {adding ? '…' : '+ List'}
         </button>

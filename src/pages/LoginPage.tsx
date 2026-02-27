@@ -4,10 +4,10 @@ export function LoginPage() {
   const { signInWithGoogle } = useAuth()
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-cream">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-10 w-full max-w-sm flex flex-col items-center gap-6">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-900">FrancoisAI</h1>
+          <h1 className="text-2xl font-display font-semibold text-gray-900">FrancoisAI</h1>
           <p className="text-sm text-gray-500 mt-1">Your personal cooking assistant</p>
         </div>
         <button

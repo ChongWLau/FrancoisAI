@@ -65,13 +65,13 @@ export function ManageStaplesSheet({ staples, onAdd, onDelete, onClose }: Props)
               onChange={e => setInputValue(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAdd()}
               placeholder="e.g. Eggs, Milk, Bread…"
-              className="flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-3 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
               autoComplete="off"
             />
             <button
               onClick={handleAdd}
               disabled={!inputValue.trim() || adding}
-              className="px-4 py-2.5 bg-blue-600 text-white text-sm font-semibold rounded-xl hover:bg-blue-700 disabled:opacity-40 transition-colors"
+              className="px-4 py-2.5 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 disabled:opacity-40 transition-colors"
             >
               Add
             </button>
