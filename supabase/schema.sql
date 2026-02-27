@@ -333,6 +333,53 @@ create trigger on_auth_user_created
 
 
 -- ---------------------------------------------------------------------------
+-- collections
+-- User-created named groups of recipes (e.g. "Weeknight Dinners").
+-- ---------------------------------------------------------------------------
+
+create table collections (
+  id         uuid primary key default gen_random_uuid(),
+  name       text not null,
+  created_by uuid references profiles(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+
+alter table collections enable row level security;
+
+create policy "Authenticated users can read all collections"
+  on collections for select to authenticated using (true);
+
+create policy "Users can insert their own collections"
+  on collections for insert to authenticated with check (auth.uid() = created_by);
+
+create policy "Users can update their own collections"
+  on collections for update to authenticated using (auth.uid() = created_by);
+
+create policy "Users can delete their own collections"
+  on collections for delete to authenticated using (auth.uid() = created_by);
+
+
+-- ---------------------------------------------------------------------------
+-- recipe_collections
+-- Many-to-many join between recipes and collections.
+-- ---------------------------------------------------------------------------
+
+create table recipe_collections (
+  recipe_id     uuid not null references recipes(id) on delete cascade,
+  collection_id uuid not null references collections(id) on delete cascade,
+  added_by      uuid references profiles(id) on delete set null,
+  added_at      timestamptz not null default now(),
+  primary key (recipe_id, collection_id)
+);
+
+alter table recipe_collections enable row level security;
+
+create policy "Authenticated users can manage recipe_collections"
+  on recipe_collections for all to authenticated
+  using (true) with check (true);
+
+
+-- ---------------------------------------------------------------------------
 -- Auth trigger: restrict sign-ups to 2 specific users
 --
 -- REPLACE the two placeholder addresses below with the Google account email

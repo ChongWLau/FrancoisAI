@@ -11,6 +11,7 @@ const LOCATION_OPTIONS: { value: StorageLocation | ''; label: string }[] = [
 
 interface Props {
   item: InventoryEntry
+  inShoppingList: boolean
   onIncrement: () => void
   onDecrement: () => void
   onDelete: () => void
@@ -20,6 +21,7 @@ interface Props {
 
 export function InventoryItemRow({
   item,
+  inShoppingList,
   onIncrement,
   onDecrement,
   onDelete,
@@ -52,34 +54,37 @@ export function InventoryItemRow({
         {item.name}
       </span>
 
-      {isEmpty ? (
-        /* Restock button */
+      {/* Restock button — left of stepper, only when empty */}
+      {isEmpty && (
         <button
           onClick={onRestock}
-          className="text-xs font-semibold text-amber-600 border border-amber-300 rounded-lg px-3 py-1.5 hover:bg-amber-50 transition-colors shrink-0"
+          disabled={inShoppingList}
+          className="text-xs font-semibold border rounded-lg px-3 py-1.5 shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed
+            text-amber-600 border-amber-300 hover:bg-amber-50 disabled:hover:bg-transparent"
         >
-          + Restock
+          {inShoppingList ? 'Added' : '+ Restock'}
         </button>
-      ) : (
-        /* Quantity stepper */
-        <div className="flex items-center gap-1 shrink-0">
-          <button
-            onClick={onDecrement}
-            className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors"
-          >
-            −
-          </button>
-          <span className="w-7 text-center text-sm font-semibold text-gray-800 tabular-nums">
-            {item.quantity}
-          </span>
-          <button
-            onClick={onIncrement}
-            className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors"
-          >
-            +
-          </button>
-        </div>
       )}
+
+      {/* Quantity stepper — always visible; − disabled at 0 */}
+      <div className="flex items-center gap-1 shrink-0">
+        <button
+          onClick={onDecrement}
+          disabled={isEmpty}
+          className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        >
+          −
+        </button>
+        <span className="w-7 text-center text-sm font-semibold text-gray-800 tabular-nums">
+          {item.quantity}
+        </span>
+        <button
+          onClick={onIncrement}
+          className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors"
+        >
+          +
+        </button>
+      </div>
 
       {/* Delete */}
       <button

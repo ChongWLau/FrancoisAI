@@ -576,6 +576,14 @@ export const Constants = {
   },
 } as const
 
+// Collections — added manually; regenerate with `supabase gen types` once migrations are applied
+export type Collection = {
+  id: string
+  name: string
+  created_by: string | null
+  created_at: string
+}
+
 // Convenience aliases — add these back after running `supabase gen types`
 export type Profile = Tables<'profiles'>
 export type Recipe = Tables<'recipes'>

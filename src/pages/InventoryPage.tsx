@@ -13,7 +13,8 @@ const SECTIONS: { key: string; label: string; emoji: string }[] = [
 
 export function InventoryPage() {
   const { grouped, loading, addItem, getSuggestions, increment, decrement, deleteItem, setLocation } = useInventory()
-  const { addItem: addToShoppingList } = useShoppingList()
+  const { unchecked, addItem: addToShoppingList } = useShoppingList()
+  const shoppingListNames = new Set(unchecked.map(i => i.name.toLowerCase()))
 
   const totalItems = Object.values(grouped).reduce((sum, arr) => sum + arr.length, 0)
 
@@ -72,6 +73,7 @@ export function InventoryPage() {
                   <InventoryItemRow
                     key={item.id}
                     item={item}
+                    inShoppingList={shoppingListNames.has(item.name.toLowerCase())}
                     onIncrement={() => increment(item.id)}
                     onDecrement={() => decrement(item.id)}
                     onDelete={() => deleteItem(item.id)}

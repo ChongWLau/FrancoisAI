@@ -3,13 +3,21 @@ import { supabase } from '@/lib/supabase'
 import type { Recipe, RecipeIngredient, RecipeStep } from '@/types/supabase'
 import type { RecipeFormData } from '@/components/recipes/RecipeForm'
 
-export interface RecipeWithDetails extends Recipe {
-  recipe_ingredients: RecipeIngredient[]
-  recipe_steps: RecipeStep[]
+
+export type RecipeCollectionEntry = {
+  collection_id: string
+  collections: { id: string; name: string }
 }
 
 export interface RecipeListItem extends Recipe {
   recipe_ingredients: { name: string }[]
+  recipe_collections: RecipeCollectionEntry[]
+}
+
+export interface RecipeWithDetails extends Recipe {
+  recipe_ingredients: RecipeIngredient[]
+  recipe_steps: RecipeStep[]
+  recipe_collections: RecipeCollectionEntry[]
 }
 
 export function useRecipes() {
@@ -22,7 +30,7 @@ export function useRecipes() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data, error } = await (supabase as any)
       .from('recipes')
-      .select('*, recipe_ingredients(name)')
+      .select('*, recipe_ingredients(name), recipe_collections(collection_id, collections(id, name))')
       .order('created_at', { ascending: false })
     if (error) setError(error.message)
     else setRecipes((data ?? []) as RecipeListItem[])
@@ -41,9 +49,9 @@ export function useRecipe(id: string) {
 
   const load = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase
+    const { data, error } = await (supabase as any)
       .from('recipes')
-      .select('*, recipe_ingredients(*), recipe_steps(*)')
+      .select('*, recipe_ingredients(*), recipe_steps(*), recipe_collections(collection_id, collections(id, name))')
       .eq('id', id)
       .single()
     if (error) setError(error.message)
