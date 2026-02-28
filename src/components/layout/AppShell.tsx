@@ -18,7 +18,7 @@ export function AppShell() {
       <header className="bg-navy-800 border-b border-navy-900 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
           <div className="flex items-center gap-2.5">
-            <img src="/francois_logo_no_bg.png" alt="" className="h-8 w-auto" />
+            <img src="/francois_chibi_no_bg.png" alt="" className="h-8 w-auto" />
             <span className="font-display font-semibold text-cream text-lg tracking-wide">FrancoisAI</span>
           </div>
           <nav className="hidden md:flex gap-1">
