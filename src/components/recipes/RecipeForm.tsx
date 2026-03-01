@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export interface RecipeFormData {
   title: string
@@ -37,9 +37,16 @@ interface Props {
 
 export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
   const [form, setForm] = useState<RecipeFormData>(initialData ?? EMPTY_FORM)
+  const [imageError, setImageError] = useState(false)
+  const [editingImage, setEditingImage] = useState(!initialData?.image_url)
+  const imageInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (initialData) setForm(initialData)
+    if (initialData) {
+      setForm(initialData)
+      setImageError(false)
+      setEditingImage(!initialData.image_url)
+    }
   }, [initialData])
 
   const set = <K extends keyof RecipeFormData>(field: K, value: RecipeFormData[K]) =>
@@ -72,12 +79,69 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Image preview */}
-      {form.image_url && (
-        <div className="aspect-video bg-gray-100 rounded-xl overflow-hidden">
-          <img src={form.image_url} alt="" className="w-full h-full object-cover" />
-        </div>
-      )}
+      {/* Image */}
+      <div>
+        {form.image_url && !editingImage ? (
+          <div className="relative aspect-video bg-gray-100 rounded-xl overflow-hidden group">
+            {imageError ? (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-gray-400">
+                <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3 3l18 18" />
+                </svg>
+                <span className="text-sm">Image failed to load</span>
+              </div>
+            ) : (
+              <img
+                src={form.image_url}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={() => setImageError(true)}
+              />
+            )}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100">
+              <button
+                type="button"
+                onClick={() => { setEditingImage(true); setTimeout(() => imageInputRef.current?.focus(), 50) }}
+                className="px-3 py-1.5 bg-white text-gray-800 text-xs font-medium rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                Change image
+              </button>
+              <button
+                type="button"
+                onClick={() => { set('image_url', ''); setImageError(false) }}
+                className="px-3 py-1.5 bg-white text-red-600 text-xs font-medium rounded-lg hover:bg-red-50 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {imageError && form.image_url && (
+              <p className="text-xs text-red-500 mb-1">The current image URL didn't load — paste a new one below.</p>
+            )}
+            <div className="flex gap-2">
+              <input
+                ref={imageInputRef}
+                type="url"
+                value={form.image_url}
+                onChange={e => { set('image_url', e.target.value); setImageError(false) }}
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+                placeholder="Image URL (https://…)"
+              />
+              {form.image_url && (
+                <button
+                  type="button"
+                  onClick={() => setEditingImage(false)}
+                  className="px-3 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors shrink-0"
+                >
+                  Done
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* Title */}
       <div>
@@ -152,18 +216,6 @@ export function RecipeForm({ initialData, onSave, onCancel, saving }: Props) {
           onChange={e => set('tags', e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
           placeholder="Italian, Pasta, Quick (comma-separated)"
-        />
-      </div>
-
-      {/* Image URL */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
-        <input
-          type="url"
-          value={form.image_url}
-          onChange={e => set('image_url', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
-          placeholder="https://..."
         />
       </div>
 
