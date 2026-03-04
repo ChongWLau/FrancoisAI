@@ -86,6 +86,14 @@ export function useShoppingList() {
     await load()
   }, [load])
 
+  const renameItem = useCallback(async (id: string, name: string) => {
+    if (!name.trim()) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    await db.from('shopping_list_items').update({ name: name.trim() }).eq('id', id)
+    await load()
+  }, [load])
+
   const clearChecked = useCallback(async () => {
     if (!listId) return
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -151,6 +159,7 @@ export function useShoppingList() {
     addItem,
     toggleItem,
     deleteItem,
+    renameItem,
     clearChecked,
     addStaplesToList,
     getSuggestions,

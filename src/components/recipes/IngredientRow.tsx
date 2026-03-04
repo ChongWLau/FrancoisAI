@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 interface ShoppingMatch { name: string; is_checked: boolean }
-interface InventoryMatch { name: string; quantity: number }
+interface InventoryMatch { name: string }
 
 interface Props {
   name: string
@@ -71,10 +71,7 @@ export function IngredientRow({ name, shoppingMatches, inventoryMatches, onAddTo
                     </p>
                     <div className="space-y-1">
                       {inventoryMatches.map((m, i) => (
-                        <p key={i} className="text-gray-700">
-                          {m.name}
-                          <span className="text-gray-400 ml-1">· {m.quantity}</span>
-                        </p>
+                        <p key={i} className="text-gray-700">{m.name}</p>
                       ))}
                     </div>
                   </div>

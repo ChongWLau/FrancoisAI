@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import type { InventoryEntry } from '@/hooks/useInventory'
 import type { StorageLocation } from '@/types/supabase'
 
@@ -11,31 +12,33 @@ const LOCATION_OPTIONS: { value: StorageLocation | ''; label: string }[] = [
 
 interface Props {
   item: InventoryEntry
-  inShoppingList: boolean
-  onIncrement: () => void
-  onDecrement: () => void
   onDelete: () => void
   onSetLocation: (location: StorageLocation | null) => void
-  onRestock: () => void
+  onRename: (name: string) => void
 }
 
-export function InventoryItemRow({
-  item,
-  inShoppingList,
-  onIncrement,
-  onDecrement,
-  onDelete,
-  onSetLocation,
-  onRestock,
-}: Props) {
-  const isEmpty = item.quantity === 0
+export function InventoryItemRow({ item, onDelete, onSetLocation, onRename }: Props) {
+  const [editing, setEditing] = useState(false)
+  const [editName, setEditName] = useState('')
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function startEdit() {
+    setEditName(item.name)
+    setEditing(true)
+    setTimeout(() => inputRef.current?.select(), 30)
+  }
+
+  function commitEdit() {
+    onRename(editName)
+    setEditing(false)
+  }
+
+  function cancelEdit() {
+    setEditing(false)
+  }
 
   return (
-    <div
-      className={`flex items-center gap-3 px-4 py-3 rounded-xl border group transition-colors ${
-        isEmpty ? 'bg-gray-50 border-gray-100' : 'bg-white border-gray-200'
-      }`}
-    >
+    <div className="flex items-center gap-3 px-4 py-3 rounded-xl border bg-white border-gray-200 group transition-colors">
       {/* Location dropdown */}
       <select
         value={item.location ?? ''}
@@ -50,41 +53,32 @@ export function InventoryItemRow({
       </select>
 
       {/* Name */}
-      <span className={`flex-1 text-sm min-w-0 truncate ${isEmpty ? 'text-gray-400' : 'text-gray-800'}`}>
-        {item.name}
-      </span>
-
-      {/* Restock button — left of stepper, only when empty */}
-      {isEmpty && (
-        <button
-          onClick={onRestock}
-          disabled={inShoppingList}
-          className="text-xs font-semibold border rounded-lg px-3 py-1.5 shrink-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed
-            text-amber-600 border-amber-300 hover:bg-amber-50 disabled:hover:bg-transparent"
-        >
-          {inShoppingList ? 'Added' : '+ Restock'}
-        </button>
+      {editing ? (
+        <input
+          ref={inputRef}
+          value={editName}
+          onChange={e => setEditName(e.target.value)}
+          onBlur={commitEdit}
+          onKeyDown={e => {
+            if (e.key === 'Enter') commitEdit()
+            else if (e.key === 'Escape') cancelEdit()
+          }}
+          className="flex-1 text-sm text-gray-800 bg-transparent border-b border-amber-400 outline-none py-0.5 min-w-0"
+        />
+      ) : (
+        <span className="flex-1 text-sm text-gray-800 min-w-0 truncate">{item.name}</span>
       )}
 
-      {/* Quantity stepper — always visible; − disabled at 0 */}
-      <div className="flex items-center gap-1 shrink-0">
-        <button
-          onClick={onDecrement}
-          disabled={isEmpty}
-          className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-        >
-          −
-        </button>
-        <span className="w-7 text-center text-sm font-semibold text-gray-800 tabular-nums">
-          {item.quantity}
-        </span>
-        <button
-          onClick={onIncrement}
-          className="w-7 h-7 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold transition-colors"
-        >
-          +
-        </button>
-      </div>
+      {/* Rename */}
+      <button
+        onClick={startEdit}
+        className="text-gray-300 hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+        aria-label={`Rename ${item.name}`}
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4.5 1.125 1.125-4.5L16.862 3.487z" />
+        </svg>
+      </button>
 
       {/* Delete */}
       <button

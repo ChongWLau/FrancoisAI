@@ -6,7 +6,6 @@ import type { StorageLocation } from '@/types/supabase'
 export interface InventoryEntry {
   id: string
   name: string
-  quantity: number
   location: StorageLocation | null
 }
 
@@ -20,20 +19,13 @@ export async function upsertInventoryItem(name: string, userId: string) {
   const db = supabase as any
   const { data } = await db
     .from('inventory_items')
-    .select('id, quantity')
+    .select('id')
     .ilike('name', name.trim())
     .limit(1)
 
-  if (data && data.length > 0) {
-    const existing = data[0] as { id: string; quantity: number | null }
-    await db
-      .from('inventory_items')
-      .update({ quantity: (existing.quantity ?? 0) + 1 })
-      .eq('id', existing.id)
-  } else {
+  if (!data || data.length === 0) {
     await db.from('inventory_items').insert({
       name: name.trim(),
-      quantity: 1,
       added_by: userId,
     })
   }
@@ -50,39 +42,28 @@ export function useInventory() {
     const db = supabase as any
     const { data } = await db
       .from('inventory_items')
-      .select('id, name, quantity, location')
+      .select('id, name, location')
       .order('name')
     setItems(
-      ((data ?? []) as { id: string; name: string; quantity: number | null; location: StorageLocation | null }[])
-        .map(row => ({ ...row, quantity: row.quantity ?? 0 }))
+      ((data ?? []) as { id: string; name: string; location: StorageLocation | null }[])
     )
     setLoading(false)
   }, [])
 
   useEffect(() => { load() }, [load])
 
-  const increment = useCallback(async (id: string) => {
-    const item = items.find(i => i.id === id)
-    if (!item) return
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
-    await db.from('inventory_items').update({ quantity: item.quantity + 1 }).eq('id', id)
-    await load()
-  }, [items, load])
-
-  const decrement = useCallback(async (id: string) => {
-    const item = items.find(i => i.id === id)
-    if (!item) return
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = supabase as any
-    await db.from('inventory_items').update({ quantity: Math.max(0, item.quantity - 1) }).eq('id', id)
-    await load()
-  }, [items, load])
-
   const deleteItem = useCallback(async (id: string) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any
     await db.from('inventory_items').delete().eq('id', id)
+    await load()
+  }, [load])
+
+  const renameItem = useCallback(async (id: string, name: string) => {
+    if (!name.trim()) return
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    await db.from('inventory_items').update({ name: name.trim() }).eq('id', id)
     await load()
   }, [load])
 
@@ -126,5 +107,5 @@ export function useInventory() {
     return groups
   }, [items])
 
-  return { items, grouped, loading, addItem, getSuggestions, increment, decrement, deleteItem, setLocation }
+  return { items, grouped, loading, addItem, getSuggestions, deleteItem, renameItem, setLocation }
 }

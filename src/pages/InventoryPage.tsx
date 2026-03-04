@@ -1,5 +1,4 @@
 import { useInventory } from '@/hooks/useInventory'
-import { useShoppingList } from '@/hooks/useShoppingList'
 import { InventoryItemRow } from '@/components/inventory/InventoryItemRow'
 import { AddItemInput } from '@/components/shopping/AddItemInput'
 
@@ -12,9 +11,7 @@ const SECTIONS: { key: string; label: string; emoji: string }[] = [
 ]
 
 export function InventoryPage() {
-  const { grouped, loading, addItem, getSuggestions, increment, decrement, deleteItem, setLocation } = useInventory()
-  const { unchecked, addItem: addToShoppingList } = useShoppingList()
-  const shoppingListNames = new Set(unchecked.map(i => i.name.toLowerCase()))
+  const { grouped, loading, addItem, getSuggestions, deleteItem, renameItem, setLocation } = useInventory()
 
   const totalItems = Object.values(grouped).reduce((sum, arr) => sum + arr.length, 0)
 
@@ -73,12 +70,9 @@ export function InventoryPage() {
                   <InventoryItemRow
                     key={item.id}
                     item={item}
-                    inShoppingList={shoppingListNames.has(item.name.toLowerCase())}
-                    onIncrement={() => increment(item.id)}
-                    onDecrement={() => decrement(item.id)}
                     onDelete={() => deleteItem(item.id)}
+                    onRename={name => renameItem(item.id, name)}
                     onSetLocation={loc => setLocation(item.id, loc)}
-                    onRestock={() => addToShoppingList(item.name)}
                   />
                 ))}
               </ul>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useShoppingList } from '@/hooks/useShoppingList'
 import { useStapleItems } from '@/hooks/useStapleItems'
 import { upsertInventoryItem } from '@/hooks/useInventory'
@@ -16,10 +16,30 @@ export function ShoppingListPage() {
     addItem,
     toggleItem,
     deleteItem,
+    renameItem,
     clearChecked,
     addStaplesToList,
     getSuggestions,
   } = useShoppingList()
+
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState('')
+  const editInputRef = useRef<HTMLInputElement>(null)
+
+  const startEdit = useCallback((id: string, name: string) => {
+    setEditingId(id)
+    setEditingName(name)
+    setTimeout(() => editInputRef.current?.select(), 30)
+  }, [])
+
+  async function commitEdit() {
+    if (editingId) await renameItem(editingId, editingName)
+    setEditingId(null)
+  }
+
+  function cancelEdit() {
+    setEditingId(null)
+  }
   const { staples, loading: staplesLoading, addStaple, deleteStaple } = useStapleItems()
 
   async function handleCheckItem(itemId: string, itemName: string) {
@@ -143,7 +163,30 @@ export function ShoppingListPage() {
                 className="w-5 h-5 rounded-full border-2 border-gray-300 hover:border-amber-500 shrink-0 transition-colors"
                 aria-label={`Mark ${item.name} as done`}
               />
-              <span className="flex-1 text-sm text-gray-800">{item.name}</span>
+              {editingId === item.id ? (
+                <input
+                  ref={editInputRef}
+                  value={editingName}
+                  onChange={e => setEditingName(e.target.value)}
+                  onBlur={commitEdit}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') commitEdit()
+                    else if (e.key === 'Escape') cancelEdit()
+                  }}
+                  className="flex-1 text-sm text-gray-800 bg-transparent border-b border-amber-400 outline-none py-0.5"
+                />
+              ) : (
+                <span className="flex-1 text-sm text-gray-800">{item.name}</span>
+              )}
+              <button
+                onClick={() => startEdit(item.id, item.name)}
+                className="text-gray-300 hover:text-amber-500 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                aria-label={`Rename ${item.name}`}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4.5 1.125 1.125-4.5L16.862 3.487z" />
+                </svg>
+              </button>
               <button
                 onClick={() => deleteItem(item.id)}
                 className="text-gray-300 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all text-xl leading-none shrink-0"

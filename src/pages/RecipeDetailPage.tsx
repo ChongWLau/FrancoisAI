@@ -33,7 +33,9 @@ function fuzzyMatch(ingredientName: string, itemName: string): boolean {
   const a = ingredientWords(ingredientName)
   const b = ingredientWords(itemName)
   if (!a.length || !b.length) return false
-  return a.some(aw => b.some(bw => bw.includes(aw) || aw.includes(bw)))
+  // All words in the shorter set must appear (exactly) in the longer set
+  const [shorter, longer] = a.length <= b.length ? [a, b] : [b, a]
+  return shorter.every(sw => longer.some(lw => lw === sw))
 }
 
 function formatTime(minutes: number): string {
