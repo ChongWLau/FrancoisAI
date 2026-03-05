@@ -135,40 +135,28 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
-          custom_meal_text: string | null
           date: string
           id: string
-          meal_type: Database["public"]["Enums"]["meal_type"]
-          notes: string | null
+          name: string
           order_index: number
-          recipe_id: string | null
-          servings_override: number | null
           updated_at: string
         }
         Insert: {
           created_at?: string
           created_by?: string | null
-          custom_meal_text?: string | null
           date: string
           id?: string
-          meal_type: Database["public"]["Enums"]["meal_type"]
-          notes?: string | null
+          name?: string
           order_index?: number
-          recipe_id?: string | null
-          servings_override?: number | null
           updated_at?: string
         }
         Update: {
           created_at?: string
           created_by?: string | null
-          custom_meal_text?: string | null
           date?: string
           id?: string
-          meal_type?: Database["public"]["Enums"]["meal_type"]
-          notes?: string | null
+          name?: string
           order_index?: number
-          recipe_id?: string | null
-          servings_override?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -177,13 +165,6 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "meal_entries_recipe_id_fkey"
-            columns: ["recipe_id"]
-            isOneToOne: false
-            referencedRelation: "recipes"
             referencedColumns: ["id"]
           },
         ]
@@ -440,7 +421,6 @@ export type Database = {
     }
     Enums: {
       chat_role: "user" | "model" | "tool"
-      meal_type: "breakfast" | "lunch" | "dinner" | "snack"
       storage_location: "fridge" | "freezer" | "pantry" | "other"
     }
     CompositeTypes: {
@@ -570,7 +550,6 @@ export const Constants = {
   public: {
     Enums: {
       chat_role: ["user", "model", "tool"],
-      meal_type: ["breakfast", "lunch", "dinner", "snack"],
       storage_location: ["fridge", "freezer", "pantry", "other"],
     },
   },
@@ -595,6 +574,5 @@ export type ShoppingList = Tables<'shopping_lists'>
 export type ShoppingListItem = Tables<'shopping_list_items'>
 export type AiChatSession = Tables<'ai_chat_sessions'>
 export type AiChatMessage = Tables<'ai_chat_messages'>
-export type MealType = Enums<'meal_type'>
 export type StorageLocation = Enums<'storage_location'>
 export type ChatRole = Enums<'chat_role'>

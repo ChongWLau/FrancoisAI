@@ -1,97 +1,76 @@
 import { formatDayShort, isToday, toISODate } from '@/lib/dates'
-import type { MealType } from '@/types/supabase'
-import type { EntryMap, MealEntryWithRecipe } from '@/hooks/useMealEntries'
-
-const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner']
-const MEAL_LABELS: Record<MealType, string> = {
-  breakfast: 'Breakfast',
-  lunch: 'Lunch',
-  dinner: 'Dinner',
-  snack: 'Snack',
-}
+import type { DayMealsMap } from '@/hooks/useMealEntries'
 
 interface Props {
   weekDays: Date[]
-  entryMap: EntryMap
-  onSlotClick: (date: string, mealType: MealType, entry?: MealEntryWithRecipe) => void
+  dayMealsMap: DayMealsMap
+  onDayClick: (date: string) => void
   onViewRecipe: (recipeId: string) => void
 }
 
-export function WeekGrid({ weekDays, entryMap, onSlotClick, onViewRecipe }: Props) {
+export function WeekGrid({ weekDays, dayMealsMap, onDayClick, onViewRecipe }: Props) {
   return (
-    /* Horizontally scrollable so it works on smaller desktop windows too */
     <div className="overflow-x-auto">
-      <div className="min-w-[640px]">
-        {/* Day header row */}
-        <div className="grid grid-cols-[64px_repeat(7,1fr)] gap-1.5 mb-1.5">
-          <div /> {/* empty corner */}
-          {weekDays.map(day => {
-            const today = isToday(day)
-            return (
+      <div className="min-w-[560px] grid grid-cols-7 gap-2">
+        {weekDays.map(day => {
+          const dateStr = toISODate(day)
+          const today = isToday(day)
+          const meals = dayMealsMap.get(dateStr) ?? []
+
+          return (
+            <div key={dateStr} className="flex flex-col gap-1.5 min-h-[120px]">
+              {/* Day header */}
               <div
-                key={toISODate(day)}
                 className={`text-center py-1 rounded-lg text-xs font-semibold ${
                   today ? 'bg-navy-800 text-white' : 'text-gray-500'
                 }`}
               >
                 {formatDayShort(day)}
               </div>
-            )
-          })}
-        </div>
 
-        {/* Meal rows */}
-        {MEAL_TYPES.map(mealType => (
-          <div key={mealType} className="grid grid-cols-[64px_repeat(7,1fr)] gap-1.5 mb-1.5">
-            {/* Meal label */}
-            <div className="flex items-center justify-end pr-2">
-              <span className="text-xs font-medium text-gray-400">{MEAL_LABELS[mealType]}</span>
-            </div>
-
-            {/* Slot for each day */}
-            {weekDays.map(day => {
-              const dateStr = toISODate(day)
-              const entry = entryMap.get(`${dateStr}_${mealType}`)
-              const label = entry?.recipes?.title ?? entry?.custom_meal_text
-              const today = isToday(day)
-
-              return (
+              {/* Meal cards */}
+              {meals.map(meal => (
                 <div
-                  key={dateStr}
-                  onClick={() => onSlotClick(dateStr, mealType, entry)}
-                  className={`rounded-lg border px-2 py-2 min-h-[52px] flex flex-col justify-between text-left transition-all cursor-pointer ${
-                    label
-                      ? today
-                        ? 'bg-amber-50 border-amber-300 hover:bg-amber-100'
-                        : 'bg-white border-gray-300 hover:border-gray-400 hover:shadow-sm'
-                      : today
-                        ? 'border-amber-200 border-dashed hover:bg-amber-50'
-                        : 'border-gray-200 border-dashed hover:bg-gray-50'
+                  key={meal.id}
+                  onClick={() => onDayClick(dateStr)}
+                  className={`rounded-lg border px-2 py-1.5 text-left cursor-pointer transition-all hover:shadow-sm ${
+                    today ? 'bg-amber-50 border-amber-200 hover:bg-amber-100' : 'bg-white border-gray-200 hover:border-gray-300'
                   }`}
                 >
-                  {label ? (
-                    <>
-                      <span className="text-xs text-gray-800 font-medium line-clamp-2 leading-snug">
-                        {label}
-                      </span>
-                      {entry?.recipe_id && (
-                        <button
-                          onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
-                          className="mt-1 self-end text-[10px] text-amber-600 hover:text-amber-800 font-medium"
-                          aria-label={`View recipe ${label}`}
-                        >
-                          View →
-                        </button>
+                  <p className="text-[11px] font-semibold text-gray-500 truncate">{meal.name}</p>
+                  {meal.recipes.length > 0 && (
+                    <div className="mt-1 space-y-0.5">
+                      {meal.recipes.slice(0, 2).map(r => (
+                        <div key={r.id} className="flex items-center gap-1">
+                          <p className="text-[11px] text-gray-700 truncate flex-1">{r.title}</p>
+                          <button
+                            onClick={e => { e.stopPropagation(); onViewRecipe(r.recipe_id) }}
+                            className="text-[10px] text-amber-600 hover:text-amber-800 font-medium shrink-0"
+                          >
+                            →
+                          </button>
+                        </div>
+                      ))}
+                      {meal.recipes.length > 2 && (
+                        <p className="text-[10px] text-gray-400">+{meal.recipes.length - 2} more</p>
                       )}
-                    </>
-                  ) : (
-                    <span className="text-xs text-gray-400">+ Add</span>
+                    </div>
                   )}
                 </div>
-              )
-            })}
-          </div>
-        ))}
+              ))}
+
+              {/* Add button */}
+              <button
+                onClick={() => onDayClick(dateStr)}
+                className={`rounded-lg border border-dashed px-2 py-1.5 text-xs text-gray-400 hover:text-gray-600 transition-colors text-left ${
+                  today ? 'border-amber-200 hover:bg-amber-50' : 'border-gray-200 hover:bg-gray-50'
+                }`}
+              >
+                + Add
+              </button>
+            </div>
+          )
+        })}
       </div>
     </div>
   )

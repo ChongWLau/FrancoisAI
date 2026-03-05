@@ -2,11 +2,10 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import { addDays, formatWeekRange, getWeekStart, toISODate } from '@/lib/dates'
-import { useMealEntries, type MealEntryWithRecipe } from '@/hooks/useMealEntries'
+import { useMealEntries } from '@/hooks/useMealEntries'
 import { WeekGrid } from '@/components/meal-planner/WeekGrid'
 import { WeekList } from '@/components/meal-planner/WeekList'
-import { MealEntrySheet, type SelectedSlot } from '@/components/meal-planner/MealEntrySheet'
-import type { MealType } from '@/types/supabase'
+import { MealEntrySheet } from '@/components/meal-planner/MealEntrySheet'
 
 function getThisWeekStart() {
   return getWeekStart(new Date())
@@ -16,9 +15,10 @@ export function MealPlannerPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const [weekStart, setWeekStart] = useState<Date>(getThisWeekStart)
-  const [selectedSlot, setSelectedSlot] = useState<SelectedSlot | null>(null)
+  const [selectedDate, setSelectedDate] = useState<string | null>(null)
 
-  const { entryMap, loading, saveEntry, deleteEntry } = useMealEntries(weekStart)
+  const { dayMealsMap, loading, addMeal, deleteMeal, addRecipeToMeal, removeRecipeFromMeal, reorderMeal } =
+    useMealEntries(weekStart)
 
   const weekDays = useMemo<Date[]>(
     () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
@@ -28,38 +28,11 @@ export function MealPlannerPage() {
   const thisWeekStr = toISODate(getThisWeekStart())
   const isCurrentWeek = toISODate(weekStart) === thisWeekStr
 
-  function goToPrevWeek() {
-    setWeekStart(prev => addDays(prev, -7))
-  }
+  function goToPrevWeek() { setWeekStart(prev => addDays(prev, -7)) }
+  function goToNextWeek() { setWeekStart(prev => addDays(prev, 7)) }
+  function goToToday() { setWeekStart(getThisWeekStart()) }
 
-  function goToNextWeek() {
-    setWeekStart(prev => addDays(prev, 7))
-  }
-
-  function goToToday() {
-    setWeekStart(getThisWeekStart())
-  }
-
-  function handleSlotClick(date: string, mealType: MealType, entry?: MealEntryWithRecipe) {
-    setSelectedSlot({ date, mealType, existingEntry: entry })
-  }
-
-  async function handleSave(recipeId: string | null, customText: string | null) {
-    if (!selectedSlot || !user) return
-    await saveEntry(
-      selectedSlot.date,
-      selectedSlot.mealType,
-      { recipe_id: recipeId, custom_meal_text: customText },
-      user.id,
-      selectedSlot.existingEntry?.id,
-    )
-    setSelectedSlot(null)
-  }
-
-  async function handleDelete() {
-    if (!selectedSlot?.existingEntry) return
-    await deleteEntry(selectedSlot.existingEntry.id)
-  }
+  const selectedMeals = selectedDate ? (dayMealsMap.get(selectedDate) ?? []) : []
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
@@ -106,8 +79,8 @@ export function MealPlannerPage() {
           <div className="hidden md:block">
             <WeekGrid
               weekDays={weekDays}
-              entryMap={entryMap}
-              onSlotClick={handleSlotClick}
+              dayMealsMap={dayMealsMap}
+              onDayClick={setSelectedDate}
               onViewRecipe={id => navigate(`/recipes/${id}`)}
             />
           </div>
@@ -116,20 +89,24 @@ export function MealPlannerPage() {
           <div className="md:hidden">
             <WeekList
               weekDays={weekDays}
-              entryMap={entryMap}
-              onSlotClick={handleSlotClick}
+              dayMealsMap={dayMealsMap}
+              onDayClick={setSelectedDate}
               onViewRecipe={id => navigate(`/recipes/${id}`)}
             />
           </div>
         </>
       )}
 
-      {/* Slide-up entry sheet */}
+      {/* Day management sheet */}
       <MealEntrySheet
-        slot={selectedSlot}
-        onClose={() => setSelectedSlot(null)}
-        onSave={handleSave}
-        onDelete={handleDelete}
+        date={selectedDate}
+        meals={selectedMeals}
+        onClose={() => setSelectedDate(null)}
+        onAddMeal={name => addMeal(selectedDate!, name, user!.id)}
+        onDeleteMeal={deleteMeal}
+        onAddRecipe={addRecipeToMeal}
+        onRemoveRecipe={removeRecipeFromMeal}
+        onReorderMeal={reorderMeal}
       />
     </div>
   )

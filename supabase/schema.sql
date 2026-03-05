@@ -10,7 +10,6 @@
 -- Enums
 -- ---------------------------------------------------------------------------
 
-create type meal_type as enum ('breakfast', 'lunch', 'dinner', 'snack');
 create type storage_location as enum ('fridge', 'freezer', 'pantry', 'other');
 create type chat_role as enum ('user', 'model', 'tool');
 
@@ -129,20 +128,17 @@ create policy "Authenticated users can manage recipe steps"
 
 -- ---------------------------------------------------------------------------
 -- meal_entries
+-- Named meal containers per day (e.g. "Dinner", "Batch cook").
 -- ---------------------------------------------------------------------------
 
 create table meal_entries (
-  id                uuid primary key default gen_random_uuid(),
-  created_by        uuid references profiles(id) on delete set null,
-  date              date not null,
-  meal_type         meal_type not null,
-  recipe_id         uuid references recipes(id) on delete set null,
-  custom_meal_text  text,
-  notes             text,
-  order_index       int not null default 0,
-  servings_override numeric,
-  created_at        timestamptz not null default now(),
-  updated_at        timestamptz not null default now()
+  id          uuid primary key default gen_random_uuid(),
+  created_by  uuid references profiles(id) on delete set null,
+  date        date not null,
+  name        text not null default '',
+  order_index int not null default 0,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
 );
 
 alter table meal_entries enable row level security;
@@ -154,6 +150,26 @@ create policy "Authenticated users can manage meal entries"
 create trigger meal_entries_updated_at
   before update on meal_entries
   for each row execute procedure update_updated_at();
+
+
+-- ---------------------------------------------------------------------------
+-- meal_entry_recipes
+-- Recipes within a named meal (many-to-many join).
+-- ---------------------------------------------------------------------------
+
+create table meal_entry_recipes (
+  id             uuid primary key default gen_random_uuid(),
+  meal_entry_id  uuid not null references meal_entries(id) on delete cascade,
+  recipe_id      uuid not null references recipes(id) on delete cascade,
+  order_index    int not null default 0,
+  created_at     timestamptz not null default now()
+);
+
+alter table meal_entry_recipes enable row level security;
+
+create policy "Authenticated users can manage meal entry recipes"
+  on meal_entry_recipes for all to authenticated
+  using (true) with check (true);
 
 
 -- ---------------------------------------------------------------------------

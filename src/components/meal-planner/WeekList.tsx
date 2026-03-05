@@ -1,79 +1,71 @@
 import { formatDayLong, isToday, toISODate } from '@/lib/dates'
-import type { MealType } from '@/types/supabase'
-import type { EntryMap, MealEntryWithRecipe } from '@/hooks/useMealEntries'
-
-const MEAL_TYPES: MealType[] = ['breakfast', 'lunch', 'dinner']
-const MEAL_LABELS: Record<MealType, string> = {
-  breakfast: 'Breakfast',
-  lunch: 'Lunch',
-  dinner: 'Dinner',
-  snack: 'Snack',
-}
+import type { DayMealsMap } from '@/hooks/useMealEntries'
 
 interface Props {
   weekDays: Date[]
-  entryMap: EntryMap
-  onSlotClick: (date: string, mealType: MealType, entry?: MealEntryWithRecipe) => void
+  dayMealsMap: DayMealsMap
+  onDayClick: (date: string) => void
   onViewRecipe: (recipeId: string) => void
 }
 
-export function WeekList({ weekDays, entryMap, onSlotClick, onViewRecipe }: Props) {
+export function WeekList({ weekDays, dayMealsMap, onDayClick, onViewRecipe }: Props) {
   return (
     <div className="space-y-3">
       {weekDays.map(day => {
         const dateStr = toISODate(day)
         const today = isToday(day)
+        const meals = dayMealsMap.get(dateStr) ?? []
 
         return (
-          <div
-            key={dateStr}
-            className="bg-white rounded-xl border border-gray-200 overflow-hidden"
-          >
-            {/* Day header */}
-            <div
-              className={`px-4 py-2.5 border-b ${
-                today ? 'bg-navy-800 border-navy-800' : 'bg-gray-50 border-gray-100'
-              }`}
+          <div key={dateStr} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+            {/* Day header — tap to open sheet */}
+            <button
+              onClick={() => onDayClick(dateStr)}
+              className={`w-full flex items-center justify-between px-4 py-2.5 border-b text-left ${
+                today ? 'bg-navy-800 border-navy-800' : 'bg-gray-50 border-gray-100 hover:bg-gray-100'
+              } transition-colors`}
             >
               <span className={`text-sm font-semibold ${today ? 'text-white' : 'text-gray-700'}`}>
-                {formatDayLong(day)}
-                {today && ' · Today'}
+                {formatDayLong(day)}{today && ' · Today'}
               </span>
-            </div>
+              <span className={`text-xs font-medium ${today ? 'text-navy-200' : 'text-gray-400'}`}>
+                + Add
+              </span>
+            </button>
 
-            {/* Meal slots */}
-            <div className="divide-y divide-gray-100">
-              {MEAL_TYPES.map(mealType => {
-                const entry = entryMap.get(`${dateStr}_${mealType}`)
-                const label = entry?.recipes?.title ?? entry?.custom_meal_text
-
-                return (
+            {/* Meals */}
+            {meals.length > 0 && (
+              <div className="divide-y divide-gray-100">
+                {meals.map(meal => (
                   <div
-                    key={mealType}
-                    onClick={() => onSlotClick(dateStr, mealType, entry)}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
+                    key={meal.id}
+                    onClick={() => onDayClick(dateStr)}
+                    className="px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer"
                   >
-                    <span className="text-xs font-semibold text-gray-400 w-20 shrink-0 uppercase tracking-wide">
-                      {MEAL_LABELS[mealType]}
-                    </span>
-                    {label ? (
-                      <span className="text-sm text-gray-800 truncate flex-1">{label}</span>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      {meal.name}
+                    </p>
+                    {meal.recipes.length === 0 ? (
+                      <p className="text-sm text-gray-400 italic">No recipes yet</p>
                     ) : (
-                      <span className="text-sm text-gray-400 flex-1">+ Add</span>
-                    )}
-                    {entry?.recipe_id && (
-                      <button
-                        onClick={e => { e.stopPropagation(); onViewRecipe(entry.recipe_id!) }}
-                        className="text-xs text-amber-600 hover:text-amber-800 font-medium shrink-0"
-                        aria-label={`View recipe ${label}`}
-                      >
-                        View →
-                      </button>
+                      <div className="space-y-1">
+                        {meal.recipes.map(r => (
+                          <div key={r.id} className="flex items-center gap-2">
+                            <span className="text-sm text-gray-700 flex-1 truncate">{r.title}</span>
+                            <button
+                              onClick={e => { e.stopPropagation(); onViewRecipe(r.recipe_id) }}
+                              className="text-xs text-amber-600 hover:text-amber-800 font-medium shrink-0"
+                            >
+                              View →
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     )}
                   </div>
-                )
-              })}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )
       })}
