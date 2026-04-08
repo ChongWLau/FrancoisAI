@@ -97,7 +97,8 @@ function extractRecipe(html: string, sourceUrl: string) {
 
   while ((m = re.exec(html)) !== null) {
     try {
-      const raw = JSON.parse(m[1].trim())
+      const raw = parseJsonLenient(m[1].trim())
+      if (!raw) continue
       const items: unknown[] = Array.isArray(raw) ? raw : raw['@graph'] ? raw['@graph'] : [raw]
       const recipe = items.find(
         (item: any) =>
@@ -128,6 +129,37 @@ function normalize(r: any, sourceUrl: string, graph: any[] = []) {
       order_index: i,
     })),
     steps: parseSteps(r.recipeInstructions ?? []),
+  }
+}
+
+// Handles malformed JSON-LD blocks with trailing garbage (e.g. extra closing braces)
+function parseJsonLenient(raw: string): any | null {
+  try {
+    return JSON.parse(raw)
+  } catch {
+    // Walk forward counting braces/brackets to find the first complete value
+    const start = raw.search(/[{[]/)
+    if (start === -1) return null
+    const open = raw[start]
+    const close = open === '{' ? '}' : ']'
+    let depth = 0
+    let inString = false
+    let escape = false
+    for (let i = start; i < raw.length; i++) {
+      const c = raw[i]
+      if (escape) { escape = false; continue }
+      if (c === '\\' && inString) { escape = true; continue }
+      if (c === '"') { inString = !inString; continue }
+      if (inString) continue
+      if (c === open) depth++
+      else if (c === close) {
+        depth--
+        if (depth === 0) {
+          try { return JSON.parse(raw.slice(start, i + 1)) } catch { return null }
+        }
+      }
+    }
+    return null
   }
 }
 
